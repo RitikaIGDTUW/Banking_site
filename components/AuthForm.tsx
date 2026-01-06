@@ -21,6 +21,8 @@ import CustomInput from './CustomInput'
 import { authFormSchema } from '@/lib/utils'
 import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { getLoggedInUser, signIn, signUp } from '@/lib/actions/user.actions'
+import PlaidLink from './PlaidLink'
 
 
 
@@ -28,6 +30,7 @@ const AuthForm = ({type}:{type:string}) => {
   const router=useRouter();
   const [user, setUser]=useState(null)
   const [isLoading, setIsLoading]= useState(false);
+  
   const formSchema= authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,17 +47,39 @@ const AuthForm = ({type}:{type:string}) => {
     setIsLoading(true)
     try{
       //sign up with appwrite and create plain link
+      const userData={
+        firstName:data.firstName!,
+        lastName:data.lastName!,
+        address1:data.address1!,
+        city:data.city!,
+        state:data.state!,
+        postalCode:data.postalCode!,
+        dateOfBirth:data.dateOfBirth!,
+        ssn:data.ssn!,
+        email:data.email!,
+        password:data.password
+      }
       if(type==='sign-up'){
-        // const newUser=await signUp(data);
-        // setUser(newUser);
+        const newUser=await signUp(userData);
+        if (newUser) {
+          setUser(newUser);
+        } else {
+          // fallback: try to read the logged-in user (session may have been created server-side)
+          try {
+            const logged = await getLoggedInUser();
+            setUser(logged as any);
+          } catch (err) {
+            console.error('Failed to populate user after signup', err);
+          }
+        }
       }
       if(type==='sign-in'){
-        //  const response=await SignIn({
-        //   email:data.email,
-        //   password:data.password
-        //  })
+         const response=await signIn({
+          email:data.email,
+          password:data.password
+         })
 
-        //  if(response)router.push('/')
+         if(response)router.push('/')
       }
     }catch(error){
        console.log(error);
@@ -84,16 +109,17 @@ const AuthForm = ({type}:{type:string}) => {
                     ?'Link Account':
                     type==='sign-in'?'Sign In':'Sign Up'}
                     <p className='text-16 font-normal text-gray-600'>
-                      {user?'Link you accoun to get started':'please enter your details'}
+                      {user?'Link your account to get started':'please enter your details'}
                     </p>
                   </h1>
                 </div>
       </header>
-      {user?(
+      {/* Show Connect Bank button on the signup page after a successful signup */}
+      {type === 'sign-up' && user ? (
         <div className='flex flex-col gap-4'>
-          {/* Plaidlink */}
+          <PlaidLink user={user} variant="primary"/>
         </div>
-      ):(
+      ) : (
         <> 
            <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8" style={{padding:'0.5rem'}}>
@@ -126,8 +152,8 @@ const AuthForm = ({type}:{type:string}) => {
           <CustomInput control={form.control} name='dateOfBirth' label="Date of birth"
           placeholder="yyyy-mm-dd"/>
           
-          <CustomInput control={form.control} name='uidai' label="UIDAI"
-          placeholder="Example: 1234"/>
+          <CustomInput control={form.control} name='ssn' label="SSN"
+          placeholder="Example: 123-45-6789"/>
           </div>
           <div className='h-5'></div>
           </>
