@@ -1,6 +1,6 @@
 'use server'
 
-import { ID } from "node-appwrite"
+import { ID, Query } from "node-appwrite"
 import { createAdminClient, createSessionClient } from "../appwrite"
 import { cookies } from "next/headers"
 import { encryptId, extractCustomerIdFromUrl, parseStringify } from "../utils"
@@ -15,29 +15,55 @@ const {
   APPWRITE_BANK_COLLECTION_ID: BANK_COLLECTION_ID,
 }=process.env;
 
-export const signIn=async({email, password}:signInProps)=>{
-    try{
-       const { account } = await createAdminClient();
-       const session = await account.createEmailPasswordSession(email, password)
-       // persist session secret in cookies so server-side calls can pick up the session
-       try {
-         const cookieStore = await cookies();
-         cookieStore.set("appwrite-session", session.secret, {
-           path: "/",
-           httpOnly: true,
-           sameSite: "strict",
-           secure: true,
-         });
-       } catch (e) {
-         // ignore cookie errors (e.g., during unit tests)
-         console.warn('Could not set session cookie', e)
-       }
-       return parseStringify(session)
+export const getUserInfo = async ({ userId }: getUserInfoProps) => {
+  try {
+    const { database } = await createAdminClient();
+
+    const result = await database.listDocuments(
+      DATABASE_ID!,
+      USER_COLLECTION_ID!,
+      [Query.equal("userId", [userId])]
+    );
+
+    if (!result.documents.length) {
+      return null; // ✅ IMPORTANT
     }
-    catch(error){
-        console.log('Error', error)
+
+    return parseStringify(result.documents[0]);
+  } catch (error) {
+    console.error("getUserInfo error:", error);
+    return null;
+  }
+};
+
+
+export const signIn = async ({ email, password }: signInProps) => {
+  try {
+    const { account } = await createAdminClient();
+
+    const session = await account.createEmailPasswordSession(email, password);
+
+    const cookieStore = await cookies();
+    cookieStore.set("appwrite-session", session.secret, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+    });
+
+    const user = await getUserInfo({ userId: session.userId });
+
+    if (!user) {
+      throw new Error("User document not found after sign in");
     }
-}
+
+    return user; // ✅ already parsed
+  } catch (error) {
+    console.error("signIn error:", error);
+    return null;
+  }
+};
+
 export const signUp=async({password, ...userData}:SignUpParams)=>{
     const {email,  firstName, lastName}=userData;
 
@@ -74,10 +100,10 @@ export const signUp=async({password, ...userData}:SignUpParams)=>{
       )
 
 
-  const session = await account.createEmailPasswordSession({
+  const session = await account.createEmailPasswordSession(
     email,
     password
-  });
+  );
 const cookieStore = await cookies();
   cookieStore.set("appwrite-session", session.secret, {
     path: "/",
@@ -97,25 +123,30 @@ const cookieStore = await cookies();
 export async function getLoggedInUser() {
   try {
     const { account } = await createSessionClient();
-    const user=  await account.get();
+    const sessionUser = await account.get();
 
-    return parseStringify(user)
+    const user = await getUserInfo({ userId: sessionUser.$id });
+
+    return user; // User | null
   } catch (error) {
     return null;
   }
 }
 
 
-export const logoutAccount=async()=>{
-    try{
-        const {account}=await createSessionClient();
-        const cookieStore =await cookies(); // ✅ call it
-        cookieStore.delete('appwrite-session'); // ✅ delete
-        await account.deleteSession('current')
-    }catch(error){
-        return null;
-    }
-}
+export const logoutAccount = async () => {
+  try {
+    const { account } = await createSessionClient();
+    await account.deleteSession("current");
+
+    const cookieStore = await cookies();
+    cookieStore.delete("appwrite-session");
+  } catch (error) {
+    console.error("logout error:", error);
+    return null;
+  }
+};
+
 
 export const createLinkToken=async(user:User)=>{
   try{
@@ -245,5 +276,53 @@ export const exchangePublicToken = async({
 
   }catch(error){
     console.error("error", error)
+  }
+}
+export const getBanks=async({userId}:getBanksProps)=>{
+  try{
+    const {database}=await createAdminClient();
+    const banks=await database.listDocuments(
+      DATABASE_ID!,
+      BANK_COLLECTION_ID!,
+      [Query.equal('userId', userId)]
+    )
+    return parseStringify(banks.documents);
+  }catch(error){
+    console.log(error)
+  }
+}
+export const getBank=async({documentId}:getBankProps)=>{
+  try{
+    if(!documentId){
+      console.warn('getBank called without documentId');
+      return null;
+    }
+    const {database}=await createAdminClient();
+    const bank=await database.listDocuments(
+      DATABASE_ID!,
+      BANK_COLLECTION_ID!,
+      [Query.equal('$id', documentId)]
+    )
+    return parseStringify(bank.documents[0]);
+  }catch(error){
+    console.log(error)
+  }
+}
+export const getBankByAccountId=async({accountId}:getBankByAccountIdProps)=>{
+  try{
+    if(!accountId){
+      console.warn('getBank called without documentId');
+      return null;
+    }
+    const {database}=await createAdminClient();
+    const bank=await database.listDocuments(
+      DATABASE_ID!,
+      BANK_COLLECTION_ID!,
+      [Query.equal('accountId', accountId)]
+    )
+    if(bank.total!=1)return null;
+    return parseStringify(bank.documents[0]);
+  }catch(error){
+    console.log(error)
   }
 }
