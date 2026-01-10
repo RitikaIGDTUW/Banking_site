@@ -35,8 +35,16 @@ const AuthForm = ({type}:{type:string}) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email:"",
-      password:""
+      email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    address1: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    dateOfBirth: "",
+    ssn: "",
     },
   })
  

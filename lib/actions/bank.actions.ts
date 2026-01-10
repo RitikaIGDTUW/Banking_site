@@ -168,18 +168,19 @@ export const getTransactions = async ({
 
       // ✅ accumulate (NOT overwrite)
       allTransactions.push(
-        ...data.added.map((transaction) => ({
-          id: transaction.transaction_id,
-          name: transaction.name,
-          amount: transaction.amount,
-          date: transaction.date,
-          paymentChannel: transaction.payment_channel,
-          accountId: transaction.account_id,
-          pending: transaction.pending,
-          category: transaction.category?.[0] ?? "",
-          image: transaction.logo_url ?? null,
-        }))
-      );
+  ...data.added.map((transaction) => ({
+    id: transaction.transaction_id,
+    name: transaction.merchant_name ?? transaction.name,
+    amount: transaction.amount,
+    date: transaction.date,
+    paymentChannel: transaction.payment_channel,
+    accountId: transaction.account_id,
+    pending: transaction.pending,
+    category: transaction.personal_finance_category?.primary ?? "",
+    image: transaction.logo_url ?? null,
+  }))
+)
+
 
       // ✅ REQUIRED updates
       cursor = data.next_cursor;

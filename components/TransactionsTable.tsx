@@ -47,10 +47,16 @@ const TransactionsTable = ({transactions}:TransactionTableProps) => {
             const isDebit=t.type==='debit';
             const isCredit=t.type==='credit';
             return (
-                <TableRow key={t.id} >
+                <TableRow
+                  key={t.id}
+                  style={{
+                    backgroundColor:
+                      t.amount < 0 ? '#fff4f3' : '#f5fff3', // Light pink for negative, light green for positive
+                  }}
+                >
                     <TableCell className="max-full pl-2 pr-10" style={{padding:'0.5rem', paddingTop:'1.5rem', paddingBottom:'1.5rem'}}>
                 <div className="flex items-center gap-3">
-                  <h1 className="text-14 truncate font-semibold text-[#344054]">
+                  <h1 className="text-14 truncate font-semibold text-[#344054]" style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>
                     {removeSpecialCharacters(t.name)}
                   </h1>
                 </div>

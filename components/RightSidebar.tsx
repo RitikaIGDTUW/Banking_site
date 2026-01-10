@@ -88,14 +88,25 @@ const RightSidebar = ({user, transactions, banks}:
             </div>
           </div>
         )}
-        <div className='mt-10 flex flex-col flex-1 gap-6' style={{marginTop:'1rem'}}>
-          <h2 className='header-2'>Top Categories</h2>
-          <div className='space-y-5'>
-            {categories.map((category,index)=>(
-              <Category key={category.name} category={category} />
-            ))}
-          </div>
-        </div> 
+        <div className="mt-6 px-3">
+          <div style={{marginTop:'3rem'}}></div>
+  <Link
+  href={`/transaction-history?id=${banks?.[0]?.appwriteItemId}`}
+  className="
+    
+    
+    inline-flex items-center justify-center
+    rounded-xl
+    font-bold
+    hover:shadow-md
+    active:scale-[0.98]
+  " style={{ padding:'0.75rem', color:'#ffffff', fontSize:'1rem', backgroundColor:"#1b85ff", marginLeft:'5rem'}}
+>
+  View Top Categories
+</Link>
+
+</div>
+
         </section>
     </aside>
     

@@ -9,7 +9,7 @@ const AnimatedCounter = ({amount}:{amount:number}) => {
         prefix="$"
         duration={2}
         decimals={2}
-        decimal=","
+        decimal='.'
          end={amount}/>
     </div>
   )

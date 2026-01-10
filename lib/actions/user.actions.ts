@@ -155,11 +155,11 @@ export const createLinkToken=async(user:User)=>{
       return null;
     }
     // Validate required user fields for Plaid
-    if(!user.$id || !user.firstName || !user.lastName){
+    if(!user.$id || !user.firstName || !user.lastName) {
       const missing = [];
-      if(!user.$id) missing.push('$id');
-      if(!user.firstName) missing.push('firstName');
-      if(!user.lastName) missing.push('lastName');
+      if (!user.$id) missing.push('$id');
+      if (!user.firstName) missing.push('firstName');
+      if (!user.lastName) missing.push('lastName');
       const msg = `createLinkToken: missing required user fields: ${missing.join(', ')}`;
       console.error(msg);
       throw new Error(msg);
@@ -168,9 +168,9 @@ export const createLinkToken=async(user:User)=>{
     const tokenParams: any = {
       user: { client_user_id: user.$id },
       client_name: `${user.firstName} ${user.lastName}`,
-      products: ['auth'] as Products[],
+      products: ["transactions", "auth", "identity"] as Products[],
       language: 'en',
-      country_codes: ['US'] as CountryCode[],
+      country_codes: ['US', 'CA'] as CountryCode[],
     };
 
     // Log request payload for debugging (avoid logging PII in production)

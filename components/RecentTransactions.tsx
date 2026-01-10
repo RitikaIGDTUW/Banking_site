@@ -39,7 +39,7 @@ const RecentTransactions = ({
         <Link
           href={`/transaction-history/?id=${selectedAccountId}&page=1`}
           className='view-all-btn'
-          style={{ padding: '0.5rem', backgroundColor: 'skyblue' }}
+          style={{ padding: '0.5rem', backgroundColor: '#39adff', color:"white" }}
         >
           View All
         </Link>
