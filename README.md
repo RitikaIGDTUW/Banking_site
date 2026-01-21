@@ -5,31 +5,43 @@ The Finova Banking Application is a modern, responsive web application designed 
 
 ## Features
 
-- **Authentication**: 
+- **Authentication**:
+  
   Secure sign-in and sign-up flows with modern authentication mechanisms to ensure user data is protected. Users can reset passwords and manage account security settings.
   ![Sign Up](public/icons/signup.jpeg "Sign Up Page")
+  
 
-- **Account Management**: 
+- **Account Management**:
+  
   View and manage multiple bank accounts in one place. Users can add, edit, or remove accounts and see a summary of their balances.
   ![Home Page](public/icons/home.jpeg "Home Page")
   
   ![Home Page 2](public/icons/home2.jpeg "Home Page - Alternate View")
+  
 
-- **Transaction History**: 
+- **Transaction History**:
+  
   Detailed transaction records with filtering and sorting options. Users can search for specific transactions and view categorized spending insights.
   ![Transaction History](public/icons/transaction.jpeg "Transaction History")
+  
 
-- **Payment Transfers**: 
+- **Payment Transfers**:
+  
   Easy and secure payment transfers between accounts or to external recipients. Includes real-time validation and confirmation of transactions.
   ![Payment Transfers](public/icons/transfer.jpeg "Payment Transfers")
+  
 
-- **Charts and Analytics**: 
+- **Charts and Analytics**:
+  
   Visualize financial data with interactive charts and graphs. Users can track spending trends, income sources, and savings goals.
   ![Categories Chart](public/icons/categories.jpeg "Spending Categories")
+  
 
-- **View Bank Cards**: 
+- **View Bank Cards**:
+   
   Users can view their bank cards, including details like card number, expiration date, and card type, in a secure interface.
   ![Bank Cards](public/icons/bankacc.jpeg "Bank Cards")
+  
 
 - **Responsive Design**: 
   Optimized for both desktop and mobile devices, ensuring a seamless experience across all screen sizes.
