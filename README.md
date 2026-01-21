@@ -12,6 +12,7 @@ The Finova Banking Application is a modern, responsive web application designed 
 - **Account Management**: 
   View and manage multiple bank accounts in one place. Users can add, edit, or remove accounts and see a summary of their balances.
   ![Home Page](public/icons/home.jpeg "Home Page")
+  
   ![Home Page 2](public/icons/home2.jpeg "Home Page - Alternate View")
 
 - **Transaction History**: 
