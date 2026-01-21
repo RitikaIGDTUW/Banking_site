@@ -11,7 +11,7 @@ export default function RootLayout({
         {children}
         <div className="auth-asset">
           <div>
-            <Image src="/icons/auth-image.svg" alt="authimg" width={500} height={500}/>
+            <Image src="/icons/auth.jpeg" alt="authimg" width={500} height={500}/>
           </div>
         </div>
     </main>
